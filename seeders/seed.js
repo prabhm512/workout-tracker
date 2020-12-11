@@ -1,10 +1,12 @@
+require("dotenv").config();
 let mongoose = require("mongoose");
 let db = require("../models");
 
-mongoose.connect("mongodb://localhost/workout", {
-  useNewUrlParser: true,
-  useFindAndModify: false
-});
+const PWD = process.env.MYDB_PWD;
+
+const databaseUrl = `mongodb+srv://prabhm512:${encodeURIComponent(PWD)}@cluster0.ltepl.mongodb.net/workout`;
+
+mongoose.connect(process.env.MONGODB_URI || databaseUrl, { useNewUrlParser: true });
 
 let workoutSeed = [
   {
