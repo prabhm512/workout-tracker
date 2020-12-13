@@ -3,28 +3,32 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-  type: {
-    type: String,
-    enum: ["cardio", "resistance"]
-  },
-  name: {
-    type: String
-  },
-  duration: {
-    type: Number
-  },
-  weight: {
-    type: Number
-  },
-  reps: {
-    type: Number
-  },
-  sets: {
-    type: Number
-  },
-  distance: {
-    type: Number
-  },
+  exercises: [
+    {
+      type: {
+        type: String,
+        enum: ["cardio", "resistance"]
+      },
+      name: {
+        type: String
+      },
+      duration: {
+        type: Number
+      },
+      weight: {
+        type: Number
+      },
+      reps: {
+        type: Number
+      },
+      sets: {
+        type: Number
+      },
+      distance: {
+        type: Number
+      },
+    }
+  ],
   totalDuration: {
     type: Number
   }
@@ -32,7 +36,11 @@ const UserSchema = new Schema({
 
 // Custom method to calculate total duration
 UserSchema.methods.calculateTotalDuration = function() {
-  this.totalDuration += `${this.duration}`;
+  this.exercises.forEach(element => {
+    // console.log(element);
+    // this.totalDuration+=element.duration;
+  });
+  // console.log(this.totalDuration);
   return this.totalDuration;
 }
 

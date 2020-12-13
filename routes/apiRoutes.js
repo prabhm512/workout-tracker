@@ -17,9 +17,6 @@ module.exports = function(app) {
     // POST new workout to collection
     app.post("/api/workouts", ({ body }, res) => {
         const workout = new Workout(body);
-        workout.calculateTotalDuration();
-        
-        console.log(workout);
 
         Workout.create({_id: workout._id})
         .then(dbWorkout => res.json(dbWorkout))
@@ -35,14 +32,17 @@ module.exports = function(app) {
         // This is done so that a new document is not created every time the upadate is run. 
         let id = mongoose.Types.ObjectId(req.params.id);
 
+        // Keep track of workout total duration after a new exercise is added to that workout
+        let totalDuration = 0;
+
         // If exercise type is cardio
         if (req.body.type === "cardio") {
-
-            Workout.collection.updateOne(
+           
+            await Workout.collection.updateOne(
                 { _id: id },
                 { 
                     $set: {
-                        day: new Date().setDate(new Date().getDate()) 
+                        day: new Date().setDate(new Date().getDate())
                     },
                     $push: { 
                         exercises: {                       
@@ -62,11 +62,11 @@ module.exports = function(app) {
         // If exercise type is resistance
         else if (req.body.type === "resistance") {
 
-            Workout.collection.updateOne(
+            await Workout.collection.updateOne(
                 { _id: id },
                 { 
                     $set: {
-                        day: new Date().setDate(new Date().getDate()) 
+                        day: new Date().setDate(new Date().getDate())
                     },
                     $push: { 
                         exercises: {                       
@@ -84,5 +84,22 @@ module.exports = function(app) {
             .then(workouts => res.status(200).json(workouts))
             .catch(err => res.status(400).json(err));
         }
+
+        // Find document with current ID so duration of all exercises within it can be added up
+        await Workout.find({_id: id}, function(err, result) {
+            if (err) {
+                console.log(err);
+            }
+            result[0].exercises.forEach(el => {
+                // Update total duration
+                totalDuration+=parseInt(el.duration);
+            });
+        });
+
+        // Set the total duration
+        Workout.collection.updateOne(
+            { _id: id},
+            { $set: { totalDuration: totalDuration } }
+        )
     });
 }
