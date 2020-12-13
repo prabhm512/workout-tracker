@@ -20,7 +20,7 @@ module.exports = function(app) {
         
         console.log(workout);
 
-        Workout.create({_id: workout})
+        Workout.create({_id: workout._id})
         .then(dbWorkout => res.json(dbWorkout))
         .catch(err => res.json(err));
     })
@@ -35,64 +35,52 @@ module.exports = function(app) {
         
         // If exercise type is cardio
         if (req.body.type === "cardio") {
-    
-            updateWorkout = {    
-                day: new Date().setDate(new Date().getDate()),
-                exercises: [
-                    {
-                        type: req.body.type,
-                        name: req.body.name,
-                        distance: req.body.distance,
-                        duration: req.body.duration
-                    }
-                ]     
-            }
 
-            console.log(updateWorkout);
-
-            // A document is created on loading the /exercise page
-            // Delete that document and create a new one
-            Workout.deleteOne({ _id: req.params.id })
-            .then(() => {
-                Workout.collection.updateOne(
-                    { _id: req.params.id },
-                    { $set: updateWorkout },
-                    { upsert: true }
-                )
-                .then(workouts => res.status(200).json(workouts))
-                .catch(err => res.status(400).json(err));
-            })
+            Workout.collection.updateOne(
+                { _id: req.params.id },
+                { 
+                    $set: {
+                        day: new Date().setDate(new Date().getDate()) 
+                    },
+                    $push: { 
+                        exercises: {                       
+                                type: req.body.type,
+                                name: req.body.name,
+                                distance: req.body.distance,
+                                duration: req.body.duration
+                            }
+                        }
+                },
+                { upsert: true }
+            )
+            .then(workouts => res.status(200).json(workouts))
+            .catch(err => res.status(400).json(err));
         }
 
         // If exercise type is resistance
         else if (req.body.type === "resistance") {
 
-            updateWorkout = {
-                day: new Date().setDate(new Date().getDate()),
-                exercises: [
-                    {
-                        type: req.body.type,
-                        name: req.body.name,
-                        weight: req.body.weight,
-                        sets: req.body.sets,
-                        reps: req.body.reps,
-                        duration: req.body.duration
-                    }
-                ]
-            }
-
-            console.log(updateWorkout);
-
-            Workout.deleteOne({ _id: req.params.id })
-            .then(() => {
-                Workout.collection.updateOne(
-                    { _id: req.params.id },
-                    { $set: updateWorkout },
-                    { upsert: true }
-                )
-                .then(workouts => res.status(200).json(workouts))
-                .catch(err => res.status(400).json(err));
-            })
+            Workout.collection.updateOne(
+                { _id: req.params.id },
+                { 
+                    $set: {
+                        day: new Date().setDate(new Date().getDate()) 
+                    },
+                    $push: { 
+                        exercises: {                       
+                                type: req.body.type,
+                                name: req.body.name,
+                                weight: req.body.weight,
+                                sets: req.body.sets,
+                                reps: req.body.reps,
+                                duration: req.body.duration
+                            }
+                    } 
+                },
+                { upsert: true }
+            )
+            .then(workouts => res.status(200).json(workouts))
+            .catch(err => res.status(400).json(err));
         }
     });
 }
