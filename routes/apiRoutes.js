@@ -1,5 +1,6 @@
 // const db = require("../models");
 const Workout = require("../models/workout.js");
+const mongoose = require("mongoose");
 
 module.exports = function(app) {
     // GET all workouts inside collection
@@ -30,14 +31,15 @@ module.exports = function(app) {
         console.log(req.params.id);
         console.log(req.body);
         
-        // Populated in the if/else statement
-        let updateWorkout = {};
-        
+        // Parameter ID is a string. Convert it into the mongoose Id format.
+        // This is done so that a new document is not created every time the upadate is run. 
+        let id = mongoose.Types.ObjectId(req.params.id);
+
         // If exercise type is cardio
         if (req.body.type === "cardio") {
 
             Workout.collection.updateOne(
-                { _id: req.params.id },
+                { _id: id },
                 { 
                     $set: {
                         day: new Date().setDate(new Date().getDate()) 
@@ -61,7 +63,7 @@ module.exports = function(app) {
         else if (req.body.type === "resistance") {
 
             Workout.collection.updateOne(
-                { _id: req.params.id },
+                { _id: id },
                 { 
                     $set: {
                         day: new Date().setDate(new Date().getDate()) 
