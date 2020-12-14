@@ -34,16 +34,6 @@ const UserSchema = new Schema({
   }
 });
 
-// Custom method to calculate total duration
-UserSchema.methods.calculateTotalDuration = function() {
-  this.exercises.forEach(element => {
-    // console.log(element);
-    // this.totalDuration+=element.duration;
-  });
-  // console.log(this.totalDuration);
-  return this.totalDuration;
-}
-
 const Workout = mongoose.model("Workout", UserSchema);
 
 module.exports = Workout;

@@ -35,14 +35,28 @@ module.exports = function(app) {
         // Keep track of workout total duration after a new exercise is added to that workout
         let totalDuration = 0;
 
+        // Find document with current ID so duration of all exercises within it can be added up
+        await Workout.find({_id: id}, function(err, result) {
+            if (err) {
+                console.log(err);
+            }
+            result[0].exercises.forEach(el => {
+                // Update total duration
+                totalDuration+=parseInt(el.duration);
+            });
+        });
+
         // If exercise type is cardio
         if (req.body.type === "cardio") {
-           
-            await Workout.collection.updateOne(
+            // Add duration of latest exercise to workout
+           const durationWithLatestExercise = totalDuration + parseInt(req.body.duration);
+
+            Workout.collection.updateOne(
                 { _id: id },
                 { 
                     $set: {
-                        day: new Date().setDate(new Date().getDate())
+                        day: new Date().setDate(new Date().getDate()),
+                        totalDuration: durationWithLatestExercise
                     },
                     $push: { 
                         exercises: {                       
@@ -61,12 +75,15 @@ module.exports = function(app) {
 
         // If exercise type is resistance
         else if (req.body.type === "resistance") {
+            // Add duration of latest exercise to workout
+            const durationWithLatestExercise = totalDuration + parseInt(req.body.duration);
 
-            await Workout.collection.updateOne(
+            Workout.collection.updateOne(
                 { _id: id },
                 { 
                     $set: {
-                        day: new Date().setDate(new Date().getDate())
+                        day: new Date().setDate(new Date().getDate()),
+                        totalDuration: durationWithLatestExercise
                     },
                     $push: { 
                         exercises: {                       
@@ -86,20 +103,20 @@ module.exports = function(app) {
         }
 
         // Find document with current ID so duration of all exercises within it can be added up
-        await Workout.find({_id: id}, function(err, result) {
-            if (err) {
-                console.log(err);
-            }
-            result[0].exercises.forEach(el => {
-                // Update total duration
-                totalDuration+=parseInt(el.duration);
-            });
-        });
+        // await Workout.find({_id: id}, function(err, result) {
+        //     if (err) {
+        //         console.log(err);
+        //     }
+        //     result[0].exercises.forEach(el => {
+        //         // Update total duration
+        //         totalDuration+=parseInt(el.duration);
+        //     });
+        // });
 
         // Set the total duration
-        Workout.collection.updateOne(
-            { _id: id},
-            { $set: { totalDuration: totalDuration } }
-        )
+        // Workout.collection.updateOne(
+        //     { _id: id},
+        //     { $set: { totalDuration: totalDuration } }
+        // )
     });
 }
