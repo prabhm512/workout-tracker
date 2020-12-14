@@ -24,8 +24,9 @@ Features:
 
 1. Create a MongoDB Atlas account
 2. Clone this repo.
-3. Run 'npm i' to install all dependencies.
-4. Run 'npm run seed' to view mongo document structure.
+3. Change mongoose connection details in server.js and seeders/seed.js.
+4. Run 'npm i' to install all dependencies.
+5. Run 'npm run seed' to view mongo document structure.
 
 ## Deployment
 
