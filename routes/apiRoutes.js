@@ -14,6 +14,15 @@ module.exports = function(app) {
         });
     });
     
+    app.get("/api/workouts/range", (req, res) => {
+        Workout.find({})
+        .then((workout) => {
+            res.status(200).json(workout);
+        })
+        .catch((err) => {
+            res.status(400).json(err);
+        });
+    });
     // POST new workout to collection
     app.post("/api/workouts", ({ body }, res) => {
         const workout = new Workout(body);
@@ -120,3 +129,4 @@ module.exports = function(app) {
         // )
     });
 }
+
