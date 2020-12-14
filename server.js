@@ -18,7 +18,7 @@ const PWD = process.env.MYDB_PWD;
 const databaseUrl = `mongodb+srv://prabhm512:${encodeURIComponent(PWD)}@cluster0.ltepl.mongodb.net/workout`;
 
 mongoose.connect(
-  process.env.MONGODB_URI || 'mongodb://localhost/deep-thoughts',
+  process.env.MONGODB_URI || databaseUrl,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
